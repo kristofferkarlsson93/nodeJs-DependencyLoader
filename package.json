@@ -1,0 +1,14 @@
+{
+  "name": "automateddependencyloading",
+  "version": "1.0.0",
+  "description": "This is an attempt to implement an automated dependencyLoader in Javascript.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -w --recursive"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bocha": "^1.6.9"
+  }
+}
