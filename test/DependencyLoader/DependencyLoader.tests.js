@@ -27,7 +27,7 @@ module.exports = testCase('DependencyLoader', {
     '=>when given a function with one dependency should run dependency': function () {
         const dependencyLoader = require('../../DependencyLoader')();
         const exampleDependency = sinon.stub();
-        const exampleModule = function (exampleDependency) {};
+        const exampleModule = function ({ exampleDependency }) {};
 
         dependencyLoader.newInstanceWithName('exampleModule', exampleModule);
 
