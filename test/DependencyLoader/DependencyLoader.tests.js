@@ -7,7 +7,7 @@ const refute = bocha.refute;
 module.exports = testCase('DependencyLoader', {
     'When given a function with no dependencies': {
         setUp() {
-            this.DependencyLoader = require('../../DependencyLoader')();
+            this.DependencyLoader = require('../../DependencyLoader/DependencyLoader.js')({ filesystemFacade: () => {} });
             this.exampleFunction = sinon.stub();
 
             this.DependencyLoader.newInstanceWithName('exampleFunction', this.exampleFunction);
@@ -17,15 +17,16 @@ module.exports = testCase('DependencyLoader', {
         }
     },
     'when given the same function twice should return same instance': function () {
-        const dependencyLoader = require('../../DependencyLoader')();
+        const dependencyLoader = require('../../DependencyLoader/DependencyLoader.js')({ filesystemFacade: () => {} });
         const exampleFunction = sinon.stub();
 
         dependencyLoader.newInstanceWithName('exampleFunction', exampleFunction);
         dependencyLoader.newInstanceWithName('exampleFunction', function () {});
         assert.calledOnce(exampleFunction);
     },
-    '=>when given a function with one dependency should run dependency': function () {
-        const dependencyLoader = require('../../DependencyLoader')();
+    'when given a function with one dependency should run dependency': function () {
+        const fileSystemFacade = () => {};
+        const dependencyLoader = require('../../DependencyLoader/DependencyLoader.js')({ fileSystemFacade });
         const exampleDependency = sinon.stub();
         const exampleModule = function ({ exampleDependency }) {};
 
