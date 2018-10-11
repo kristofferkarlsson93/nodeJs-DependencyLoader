@@ -6,14 +6,14 @@ const refute = bocha.refute;
 const realFunctionReflector = require('js-function-reflector');
 
 module.exports = testCase('DependencyLoader', {
-    'When given a function with no dependencies': {
+    'When given a function with NO dependencies': {
         setUp() {
             this.dependencyCache = {
                 add: sinon.stub(),
                 get: () => null
             };
             const DependencyLoader = require('../../DependencyLoader/DependencyLoader.js');
-            const dependencyLoader = DependencyLoader({ dependencyCache: this.dependencyCache});
+            const dependencyLoader = DependencyLoader({ dependencyCache: this.dependencyCache });
             this.exampleFunction = sinon.stub().returns({});
 
             dependencyLoader.newInstanceWithName('exampleFunction', this.exampleFunction);
@@ -45,17 +45,17 @@ module.exports = testCase('DependencyLoader', {
             this.dependencyLoader.newInstanceWithName('exampleFunction', this.exampleFunction);
             this.dependencyLoader.newInstanceWithName('exampleFunction', this.exampleFunction);
         },
-        'should get cached intstance for secound call': function () {
+        'should get cached intstance for second call': function () {
             assert.calledWith(this.dependencyCache.get, 'exampleFunction');
         },
         'should instantiate the function only once': function () {
             assert.calledOnce(this.exampleFunction);
         },
     },
-    'when given a function with one dependency': {
+    'when given a function with 1 dependency': {
         setUp() {
             const DependencyLoader = require('../../DependencyLoader/DependencyLoader.js');
-            this.exampleDependency = sinon.stub().returns(() => {});
+            this.exampleDependency = sinon.stub().returns(function () {return {};});
             const dependencyFinder = {
                 findByName: () => ({ exampleDependency: this.exampleDependency })
             };
@@ -63,14 +63,18 @@ module.exports = testCase('DependencyLoader', {
                 add: sinon.stub(),
                 get: () => null
             };
-            this.exampleModule = function ({ exampleDependency }) {return {};};
+            this.exampleModule = function ({ exampleDependency }) {
+                return {
+                    verification: function () {return 'works';}
+                };
+            };
 
             const dependencyLoader = DependencyLoader({
                 dependencyCache: this.dependencyCache,
                 dependencyFinder,
                 functionReflector: realFunctionReflector
             });
-            dependencyLoader.newInstanceWithName('exampleModule', this.exampleModule);
+            this.instance = dependencyLoader.newInstanceWithName('exampleModule', this.exampleModule);
         },
         'should run dependency': function () {
             assert.calledOnce(this.exampleDependency);
@@ -80,6 +84,44 @@ module.exports = testCase('DependencyLoader', {
         },
         'should cache function': function () {
             assert.calledWith(this.dependencyCache.add, sinon.match("exampleModule", {}));
+        },
+        'should return correct instance': function () {
+            assert.equals(this.instance.verification(), 'works');
         }
+    },
+    'when given a function with 1 dependency that it self has 1 dependency': {
+        setUp() {
+            const DependencyLoader = require('../../DependencyLoader/DependencyLoader.js');
+            this.dependencyCache = {
+                add: sinon.stub(),
+                get: () => null
+            };
+            this.secondLevelDependency = sinon.stub().returns({ verification: function () {return 'works'} });
+            const firstLevelDependency = function ({ secondLevelDependency }) {return { verification: function () {return secondLevelDependency.verification()} }};
+            const dependencyFinder = {
+                findByName: sinon.stub()
+                    .onCall(0).returns({ firstLevelDependency })
+                    .onCall(1).returns({ secondLevelDependency: this.secondLevelDependency }),
+            };
+            const dependencyLoader = DependencyLoader({
+                dependencyCache: this.dependencyCache,
+                dependencyFinder,
+                functionReflector: realFunctionReflector
+            });
+            const module = function ({ firstLevelDependency }) {return { verification: function () {return firstLevelDependency.verification();} };};
+            this.instance = dependencyLoader.newInstanceWithName('module', module);
+        },
+        'should run the second level dependency': function () {
+            assert.calledOnce(this.secondLevelDependency);
+        },
+        'should run the requested function with its dependencies': function () {
+            assert.equals(this.instance.verification(), 'works');
+        },
+        'should cache the nested dependency': function () {
+            assert.calledThrice(this.dependencyCache.add);
+            const args = this.dependencyCache.add.getCall(0).args;
+            assert.equals(args[0], 'secondLevelDependency');
+            assert.equals(Object.keys(args[1])[0], 'verification')
+        },
     }
 });
