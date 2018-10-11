@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bocha": "^1.6.9"
+    "bocha": "^1.6.9",
+    "js-function-reflector": "^2.0.2"
   }
 }

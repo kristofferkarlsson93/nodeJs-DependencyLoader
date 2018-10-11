@@ -121,7 +121,7 @@ module.exports = testCase('DependencyLoader', {
             assert.calledThrice(this.dependencyCache.add);
             const args = this.dependencyCache.add.getCall(0).args;
             assert.equals(args[0], 'secondLevelDependency');
-            assert.equals(Object.keys(args[1])[0], 'verification')
+            assert.equals(Object.keys(args[1])[0], 'verification');
         },
     }
 });
