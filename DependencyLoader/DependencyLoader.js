@@ -22,13 +22,20 @@ module.exports = function ({ dependencyCache, dependencyFinder, functionReflecto
 
     function instantiateDependenciesForModule(module) {
         const dependencies = {};
-        const reflector = functionReflector(module);
-        const parameter = reflector.params[0].value.keys[0].name;
+        const parameterNames = listParametersForModule(module);
 
-        const foundDependency = dependencyFinder.findByName(parameter);
-        dependencies[parameter] = newInstanceWithName(parameter, foundDependency[parameter]);
+        // refactor so that dependencyFinder can take a list and simultaneously search parameters
+        parameterNames.forEach(parameter => {
+            const foundDependency = dependencyFinder.findByName(parameter);
+            dependencies[parameter] = newInstanceWithName(parameter, foundDependency[parameter]);
+        });
 
         return dependencies;
+    }
+
+    function listParametersForModule(module) {
+        const reflector = functionReflector(module);
+        return reflector.params[0].value.keys.map(param => param.name);
     }
 
     function moduleHasDependencies(module) {

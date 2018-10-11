@@ -122,6 +122,46 @@ module.exports = testCase('DependencyLoader', {
             const args = this.dependencyCache.add.getCall(0).args;
             assert.equals(args[0], 'secondLevelDependency');
             assert.equals(Object.keys(args[1])[0], 'verification');
+        }
+    },
+    'when given a function with 2 dependencies': {
+        setUp() {
+            const DependencyLoader = require('../../DependencyLoader/DependencyLoader.js');
+            const dependencyCache = { add: () => {}, get: () => null };
+            this.secondDependency = sinon.stub().returns({
+                verification: function () {return 2}
+            });
+            this.firstDependency = sinon.stub().returns({
+                verification: function () {return 1}
+            });
+            const dependencyFinder = {
+                findByName: sinon.stub()
+                    .onCall(0).returns({ firstDependency: this.firstDependency })
+                    .onCall(1).returns({ secondDependency: this.secondDependency }),
+            };
+            const dependencyLoader = DependencyLoader({
+                dependencyCache,
+                dependencyFinder,
+                functionReflector: realFunctionReflector
+            });
+            const module = function ({ firstDependency, secondDependency }) {
+                return {
+                    verification: function () {
+                        return firstDependency.verification() + secondDependency.verification();
+                    }
+                };
+            };
+            this.instance = dependencyLoader.newInstanceWithName('module', module);
         },
+        'should instantiate first dependency': function () {
+            assert.calledOnce(this.firstDependency);
+        },
+        'should instantiate secound dependency': function () {
+            assert.calledOnce(this.secondDependency);
+        },
+        'should instantiate requested function with correct dependencies': function () {
+            assert.equals(this.instance.verification(), 3);
+        }
+        // TODO: Refactor so that dependencyFinder has a function that takes an array of dep-names
     }
 });
