@@ -57,7 +57,7 @@ module.exports = testCase('DependencyLoader', {
             const DependencyLoader = require('../../DependencyLoader/DependencyLoader.js');
             this.exampleDependency = sinon.stub().returns(function () {return {};});
             const dependencyFinder = {
-                findByName: () => ({ exampleDependency: this.exampleDependency })
+                findFromArray: () => ({exampleDependency: this.exampleDependency})
             };
             this.dependencyCache = {
                 add: sinon.stub(),
@@ -99,7 +99,7 @@ module.exports = testCase('DependencyLoader', {
             this.secondLevelDependency = sinon.stub().returns({ verification: function () {return 'works'} });
             const firstLevelDependency = function ({ secondLevelDependency }) {return { verification: function () {return secondLevelDependency.verification()} }};
             const dependencyFinder = {
-                findByName: sinon.stub()
+                findFromArray: sinon.stub()
                     .onCall(0).returns({ firstLevelDependency })
                     .onCall(1).returns({ secondLevelDependency: this.secondLevelDependency }),
             };
@@ -135,9 +135,10 @@ module.exports = testCase('DependencyLoader', {
                 verification: function () {return 1}
             });
             const dependencyFinder = {
-                findByName: sinon.stub()
-                    .onCall(0).returns({ firstDependency: this.firstDependency })
-                    .onCall(1).returns({ secondDependency: this.secondDependency }),
+                findFromArray: sinon.stub().returns({
+                    firstDependency: this.firstDependency,
+                    secondDependency: this.secondDependency
+                })
             };
             const dependencyLoader = DependencyLoader({
                 dependencyCache,
@@ -156,7 +157,7 @@ module.exports = testCase('DependencyLoader', {
         'should instantiate first dependency': function () {
             assert.calledOnce(this.firstDependency);
         },
-        'should instantiate secound dependency': function () {
+        'should instantiate second dependency': function () {
             assert.calledOnce(this.secondDependency);
         },
         'should instantiate requested function with correct dependencies': function () {

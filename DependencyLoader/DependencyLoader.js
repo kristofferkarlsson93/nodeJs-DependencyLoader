@@ -24,10 +24,16 @@ module.exports = function ({ dependencyCache, dependencyFinder, functionReflecto
         const dependencies = {};
         const parameterNames = listParametersForModule(module);
 
-        // refactor so that dependencyFinder can take a list and simultaneously search parameters
-        parameterNames.forEach(parameter => {
-            const foundDependency = dependencyFinder.findByName(parameter);
-            dependencies[parameter] = newInstanceWithName(parameter, foundDependency[parameter]);
+        parameterNames.forEach((parameter, index) => {
+            let possiblyCachedDependency = dependencyCache.get(parameter);
+            if (possiblyCachedDependency) {
+                dependencies[parameter] = possiblyCachedDependency;
+                parameterNames.slice(index, 1);
+            }
+        });
+        let foundDependencies = dependencyFinder.findFromArray(parameterNames);
+        Object.keys(foundDependencies).forEach(dependencyName => {
+            dependencies[dependencyName] = newInstanceWithName(dependencyName, foundDependencies[dependencyName]);
         });
 
         return dependencies;
