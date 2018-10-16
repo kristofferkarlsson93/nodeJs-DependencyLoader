@@ -1,8 +1,8 @@
-let bocha = require('bocha');
-let sinon = bocha.sinon;
-let testCase = bocha.testCase;
-let assert = bocha.assert;
-let refute = bocha.refute;
+const bocha = require('bocha');
+const sinon = bocha.sinon;
+const testCase = bocha.testCase;
+const assert = bocha.assert;
+const refute = bocha.refute;
 const utils = require('../utils.js')();
 
 module.exports = testCase('DependencyCache', {
