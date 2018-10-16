@@ -3,6 +3,7 @@ let sinon = bocha.sinon;
 let testCase = bocha.testCase;
 let assert = bocha.assert;
 let refute = bocha.refute;
+const utils = require('../utils.js')();
 
 module.exports = testCase('DependencyCache', {
     'when trying to get an uncached value should return null': function () {
@@ -10,9 +11,11 @@ module.exports = testCase('DependencyCache', {
 
         assert.equals(dependencyCache.get('unknown'), null);
     },
-    '// when adding a dependency should throw if no key is provided': function () {
+    'when adding a dependency should throw if no key is provided': function () {
         const dependencyCache = createDependnecyCache();
-        assert.exception(dependencyCache.add('', () => {}));
+
+        const errorData = utils.runFunctionAndGetErrorData(dependencyCache.add, ['', () => {}]);
+        assert.equals(errorData.didThrow, true);
     },
     'when adding a correct key and value to cache should be able to get it': function () {
         const dependencyCache = createDependnecyCache();
@@ -25,7 +28,7 @@ module.exports = testCase('DependencyCache', {
     'when adding the same key twice should overwrite first value': function () {
         const dependencyCache = createDependnecyCache();
         const firstFunction = function (verificationString) { return { test: () => verificationString } };
-        const secondFunction =  function () { return { test: () => 'number 2' } };
+        const secondFunction = function () { return { test: () => 'number 2' } };
         dependencyCache.add('example', firstFunction());
         dependencyCache.add('example', secondFunction());
 

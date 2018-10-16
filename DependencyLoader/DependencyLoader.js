@@ -23,12 +23,11 @@ module.exports = function ({ dependencyCache, dependencyFinder, functionReflecto
     function instantiateDependenciesForModule(module) {
         const dependencies = {};
         const parameterNames = listParametersForModule(module);
-
         parameterNames.forEach((parameter, index) => {
             let possiblyCachedDependency = dependencyCache.get(parameter);
             if (possiblyCachedDependency) {
                 dependencies[parameter] = possiblyCachedDependency;
-                parameterNames.slice(index, 1);
+                parameterNames.splice(index, 1);
             }
         });
         let foundDependencies = dependencyFinder.findFromArray(parameterNames);

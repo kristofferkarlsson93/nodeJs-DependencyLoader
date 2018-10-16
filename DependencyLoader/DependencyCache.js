@@ -11,9 +11,7 @@ module.exports = function () {
     }
 
     function add (key, value) {
-        if (!key) {
-            throw Error('No key provided when trying to cache function');
-        }
+        if (!key) throw Error('No key provided when trying to cache function');
         cache[key] = value;
     }
 };

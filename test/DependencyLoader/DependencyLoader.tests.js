@@ -57,7 +57,7 @@ module.exports = testCase('DependencyLoader', {
             const DependencyLoader = require('../../DependencyLoader/DependencyLoader.js');
             this.exampleDependency = sinon.stub().returns(function () {return {};});
             const dependencyFinder = {
-                findFromArray: () => ({exampleDependency: this.exampleDependency})
+                findFromArray: () => ({ exampleDependency: this.exampleDependency })
             };
             this.dependencyCache = {
                 add: sinon.stub(),
@@ -162,7 +162,32 @@ module.exports = testCase('DependencyLoader', {
         },
         'should instantiate requested function with correct dependencies': function () {
             assert.equals(this.instance.verification(), 3);
-        }
-        // TODO: Refactor so that dependencyFinder has a function that takes an array of dep-names
+        },
+    },
+    'when a module has dependency A and B and dependency B is dependent on A should NOT search for A twice': function () {
+        const DependencyLoader = require('../../DependencyLoader/DependencyLoader.js');
+        const DependencyCache = require('../../DependencyLoader/DependencyCache.js');
+        const dependencyCache = DependencyCache();
+        const dependencyA = sinon.stub().returns({});
+        const dependencyC = function () {return {}};
+        const dependencyB = function ({ dependencyA, dependencyC }) {return {}};
+        const module = function ({ dependencyA, dependencyB }) {return {}};
+        const dependencyFinder = {
+            findFromArray: sinon.stub()
+                .onCall(0).returns({ dependencyA, dependencyB })
+                .onCall(1).returns({dependencyC})
+        };
+        const dependencyLoader = DependencyLoader({
+            dependencyCache,
+            dependencyFinder,
+            functionReflector: realFunctionReflector
+        });
+
+        dependencyLoader.newInstanceWithName('module', module);
+
+        assert.calledOnce(dependencyA);
+        assert.calledTwice(dependencyFinder.findFromArray);
+        const argsSecondCall = dependencyFinder.findFromArray.getCall(1).args[0];
+        assert.equals(argsSecondCall, ['dependencyC']);
     }
 });
