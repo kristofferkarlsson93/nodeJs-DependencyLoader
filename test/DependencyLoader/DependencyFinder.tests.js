@@ -35,7 +35,8 @@ module.exports = testCase('DependencyFinder', {
     '//when given an array with one dependency name should NOT care about casing': function () {},
     '//when given an array with one dependency name but wanted file is called index.js should use the dir name as key': function () {},
     '//when given an array with two dependency names on same level should load both': function () {},
-    '//when given an array with two dependency names on different levels should load both': function () {}
+    '//when given an array with two dependency names on different levels should load both': function () {},
+    '//when searching for dependencies should ignore test files': function () {}
 });
 
 // TODO: implementera module loader.
