@@ -10,16 +10,17 @@ module.exports = function ({ fs, basePath, moduleLoader }) {
         const search = function (path) {
             fs.lstat(path, function (err, stat) {
                 if (stat.isDirectory()) {
-                    fs.readdir(path, function (err, files) {
-                        files.forEach(file => {
-                            filePath = path_module.join(path, file);
-                            search(filePath)
-                        });
+                    fs.readdir(path, function (err, items) {
+                        const noItems = items.length;
+                        let i = 0;
+                        for (; i < noItems; i++) {
+                            search(path_module.join(path, items[i]));
+                        }
                     });
                 } else {
-                    const fileName = getFileNameFromPath(path);
-                    if (array.includes(fileName)) {
-                        loaded[array[0]] = moduleLoader.load(path);
+                    const {valid, name} = evaluateFoundFilePath(path, array);
+                    if (valid) {
+                        loaded[name] = moduleLoader.load(path);
                     }
                 }
             });
@@ -28,8 +29,26 @@ module.exports = function ({ fs, basePath, moduleLoader }) {
         return loaded;
     }
 
-    function getFileNameFromPath(path) {
-        return path.replace(/^.*[\\\/]/, '').replace('.js', '');
+    function evaluateFoundFilePath(path, modules) {
+        const { fileName, directory } = extractDataFromPath(path);
+        if (moduleIsRequested(fileName, modules)) {
+            const name = modules.find(module => module.toLowerCase() === fileName.toLowerCase());
+            return {valid: true, name };
+        } else if ((fileName === 'index' && moduleIsRequested(directory, modules))) {
+            const name = modules.find(module => module.toLowerCase() === directory.toLowerCase());
+            return {valid: true, name};
+        } else return {valid: false, name: null}
     }
 
+    function moduleIsRequested(moduleName, files) {
+        return files.some(file => file.toLowerCase() === moduleName.toLowerCase());
+    }
+
+    function extractDataFromPath(path) {
+        const pathData = path.split(/[\\\/]/);
+        return {
+            fileName: pathData[pathData.length - 1].replace('.js', ''),
+            directory: pathData[pathData.length - 2]
+        };
+    }
 };
