@@ -3,6 +3,7 @@ const sinon = bocha.sinon;
 const testCase = bocha.testCase;
 const assert = bocha.assert;
 const refute = bocha.refute;
+const defaultsDeep = bocha.defaultsDeep;
 
 module.exports = testCase('DependencyFinder', {
     'when given an array with one requested dependency which is on the base level': {
@@ -80,8 +81,8 @@ module.exports = testCase('DependencyFinder', {
             const fakePath = 'Project/app/src';
             const fakeModuleNames = ['fakeModule', 'thatFakedOne'];
             const fs = fakeFs(['fakeModule.js', 'app.js', 'thatFakedOne.js']);
-            this.fakeModule = function () {return'fakemodule';};
-            this.thatFakedOne = function () {return'thatFakedone';};
+            this.fakeModule = function () {};
+            this.thatFakedOne = function () {};
             this.moduleLoader = {
                 load: sinon.stub()
                     .onCall(0).returns(this.fakeModule)
@@ -103,8 +104,124 @@ module.exports = testCase('DependencyFinder', {
             assert.equals(this.dependencies, { fakeModule: this.fakeModule, thatFakedOne: this.thatFakedOne });
         }
     },
-    '//when given an array with two dependency names on different levels should load both': function () {},
-    '//when searching for dependencies should ignore test files': function () {}
+    'when given an array with two dependency names on different levels should load both': function () {
+        const fakePath = 'Project/app/src';
+        const fakeModuleNames = ['fakeModule', 'thatFakedOne'];
+        let readdirCalledTimes = 0;
+        const fs = fakeFs([], {
+            readdir: function (path, callback) {
+                if (readdirCalledTimes === 0) {
+                    readdirCalledTimes++;
+                    assert.equals(path, 'Project/app/src');
+                    callback(null, ['fakeModule.js', 'app.js', 'thatFakedOnesDir']);
+                }
+                else if (readdirCalledTimes === 1) {
+                    assert.equals(path.replace(/\\/g, '/'), 'Project/app/src/thatFakedOnesDir');
+                    readdirCalledTimes++;
+                    callback(null, ['thatFakedOne.js']);
+                }
+            }
+        });
+        this.fakeModule = function () {};
+        this.thatFakedOne = function () {};
+        this.moduleLoader = {
+            load: sinon.stub()
+                .onCall(0).returns(this.fakeModule)
+                .onCall(1).returns(this.thatFakedOne)
+        };
+        const dependencyFinder = createDependencyFinder({
+            basePath: fakePath,
+            fs,
+            moduleLoader: this.moduleLoader
+        });
+        this.dependencies = dependencyFinder.findFromArray(fakeModuleNames);
+
+        assert.calledTwice(this.moduleLoader.load);
+        assert.calledWith(this.moduleLoader.load, 'Project\\app\\src\\fakeModule.js');
+        assert.calledWith(this.moduleLoader.load, 'Project\\app\\src\\thatFakedOnesDir\\thatFakedOne.js');
+    },
+    'when searching for dependencies should ignore test folders': function () {
+        const fakePath = 'Project/app/src';
+        const fakeModuleNames = ['fakeModule'];
+        const fs = fakeFs([], {
+            readdir: function (path, callback) {
+                refute.equals(path.replace(/\\/g, '/'), 'Project/app/src/test');
+                refute.equals(path.replace(/\\/g, '/'), 'Project/app/src/tests');
+                callback(null, ['fakeModule.js', 'test', 'tests']);
+            }
+        });
+        const fakeModule = function () {};
+        const moduleLoader = {
+            load: () => fakeModule
+        };
+        const dependencyFinder = createDependencyFinder({
+            basePath: fakePath,
+            fs,
+            moduleLoader
+        });
+        const dependencies = dependencyFinder.findFromArray(fakeModuleNames);
+        assert.equals(dependencies, { fakeModule });
+    },
+    'when searching for dependencies should ignore node_modules folder': function () {
+        const fakePath = 'Project/app/src';
+        const fakeModuleNames = ['fakeModule'];
+        const fs = fakeFs([], {
+            readdir: function (path, callback) {
+                refute.equals(path.replace(/\\/g, '/'), 'Project/app/src/node_modules');
+                refute.equals(path.replace(/\\/g, '/'), 'Project/app/src/tests');
+                callback(null, ['fakeModule.js', 'node_modules']);
+            }
+        });
+        const fakeModule = function () {};
+        const moduleLoader = {
+            load: () => fakeModule
+        };
+        const dependencyFinder = createDependencyFinder({
+            basePath: fakePath,
+            fs,
+            moduleLoader
+        });
+        const dependencies = dependencyFinder.findFromArray(fakeModuleNames);
+        assert.equals(dependencies, { fakeModule });
+    },
+    'when all dependencies found should stop traversing file tree': function () {
+        const fakePath = 'Project/app/src';
+        const fakeModuleNames = ['fakeModule', 'thatFakedOne'];
+        let readdirCalledTimes = 0;
+        const fs = fakeFs([], {
+            readdir: function (path, callback) {
+                refute.equals(path.replace(/\\/g, '/'), 'Project/app/src/thatFakedOnesDir/notWantedDir');
+                if (readdirCalledTimes === 0) {
+                    readdirCalledTimes++;
+                    assert.equals(path, 'Project/app/src');
+                    callback(null, ['fakeModule.js', 'app.js', 'thatFakedOnesDir']);
+                }
+                else if (readdirCalledTimes === 1) {
+                    assert.equals(path.replace(/\\/g, '/'), 'Project/app/src/thatFakedOnesDir');
+                    readdirCalledTimes++;
+                    callback(null, ['thatFakedOne.js', 'notWantedDir']);
+                }
+            }
+        });
+        const fakeModule = function () {};
+        const thatFakedOne = function () {};
+        const moduleLoader = {
+            load: sinon.stub()
+                .onCall(0).returns(fakeModule)
+                .onCall(1).returns(thatFakedOne)
+        };
+        const dependencyFinder = createDependencyFinder({
+            basePath: fakePath,
+            fs,
+            moduleLoader
+        });
+        const dependencies = dependencyFinder.findFromArray(fakeModuleNames);
+
+        assert.calledTwice(moduleLoader.load);
+        assert.calledWith(moduleLoader.load, 'Project\\app\\src\\fakeModule.js');
+        assert.calledWith(moduleLoader.load, 'Project\\app\\src\\thatFakedOnesDir\\thatFakedOne.js');
+        assert.equals(dependencies, { fakeModule, thatFakedOne });
+    }
 });
 
 function createDependencyFinder(dependencies) {
@@ -112,8 +229,8 @@ function createDependencyFinder(dependencies) {
     return DependencyFinder(dependencies);
 }
 
-function fakeFs(readdirFileNames) {
-    return {
+function fakeFs(readdirFileNames, object) {
+    return defaultsDeep(object, {
         lstat: function (path, callback) {
             callback(null, {
                 isDirectory: () => !path.includes('.js')
@@ -122,7 +239,5 @@ function fakeFs(readdirFileNames) {
         readdir: function (path, callback) {
             callback(null, readdirFileNames);
         }
-    };
+    });
 }
-
-// TODO: implementera module loader.
