@@ -24,13 +24,13 @@ module.exports = function ({ dependencyCache, dependencyFinder, functionReflecto
         const dependencies = {};
         const parameterNames = listParametersForModule(module);
         parameterNames.forEach((parameter, index) => {
-            let possiblyCachedDependency = dependencyCache.get(parameter);
+            const possiblyCachedDependency = dependencyCache.get(parameter);
             if (possiblyCachedDependency) {
                 dependencies[parameter] = possiblyCachedDependency;
                 parameterNames.splice(index, 1);
             }
         });
-        let foundDependencies = dependencyFinder.findFromArray(parameterNames);
+        const foundDependencies = dependencyFinder.findFromArray(parameterNames);
         Object.keys(foundDependencies).forEach(dependencyName => {
             dependencies[dependencyName] = newInstanceWithName(dependencyName, foundDependencies[dependencyName]);
         });

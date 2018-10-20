@@ -1,5 +1,5 @@
-let path = require('path');
-let bocha = require('bocha');
+const path = require('path');
+const bocha = require('bocha');
 process.stdout.write("\x1b]0;AUTOTEST - clientServerShared\x07");
 bocha.watch({
     srcPath: path.join(__dirname, '..'),

@@ -4,7 +4,7 @@ module.exports = function () {
     };
 
     function runFunctionAndGetErrorData(func, arguments) {
-        let result = { didThrow: false, errorMessage: '' };
+        const result = { didThrow: false, errorMessage: '' };
         try {
             func(...arguments);
         } catch (error) {
