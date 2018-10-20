@@ -109,16 +109,16 @@ module.exports = testCase('DependencyFinder', {
         const fakeModuleNames = ['fakeModule', 'thatFakedOne'];
         let readdirCalledTimes = 0;
         const fs = fakeFs([], {
-            readdir: function (path, callback) {
+            readdirSync: function (path) {
                 if (readdirCalledTimes === 0) {
                     readdirCalledTimes++;
                     assert.equals(path, 'Project/app/src');
-                    callback(null, ['fakeModule.js', 'app.js', 'thatFakedOnesDir']);
+                    return ['fakeModule.js', 'app.js', 'thatFakedOnesDir'];
                 }
                 else if (readdirCalledTimes === 1) {
                     assert.equals(path.replace(/\\/g, '/'), 'Project/app/src/thatFakedOnesDir');
                     readdirCalledTimes++;
-                    callback(null, ['thatFakedOne.js']);
+                    return ['thatFakedOne.js'];
                 }
             }
         });
@@ -144,10 +144,10 @@ module.exports = testCase('DependencyFinder', {
         const fakePath = 'Project/app/src';
         const fakeModuleNames = ['fakeModule'];
         const fs = fakeFs([], {
-            readdir: function (path, callback) {
+            readdirSync: function (path) {
                 refute.equals(path.replace(/\\/g, '/'), 'Project/app/src/test');
                 refute.equals(path.replace(/\\/g, '/'), 'Project/app/src/tests');
-                callback(null, ['fakeModule.js', 'test', 'tests']);
+                return ['fakeModule.js', 'test', 'tests'];
             }
         });
         const fakeModule = function () {};
@@ -166,10 +166,10 @@ module.exports = testCase('DependencyFinder', {
         const fakePath = 'Project/app/src';
         const fakeModuleNames = ['fakeModule'];
         const fs = fakeFs([], {
-            readdir: function (path, callback) {
+            readdirSync: function (path) {
                 refute.equals(path.replace(/\\/g, '/'), 'Project/app/src/node_modules');
                 refute.equals(path.replace(/\\/g, '/'), 'Project/app/src/tests');
-                callback(null, ['fakeModule.js', 'node_modules']);
+                return ['fakeModule.js', 'node_modules'];
             }
         });
         const fakeModule = function () {};
@@ -189,17 +189,17 @@ module.exports = testCase('DependencyFinder', {
         const fakeModuleNames = ['fakeModule', 'thatFakedOne'];
         let readdirCalledTimes = 0;
         const fs = fakeFs([], {
-            readdir: function (path, callback) {
+            readdirSync: function (path) {
                 refute.equals(path.replace(/\\/g, '/'), 'Project/app/src/thatFakedOnesDir/notWantedDir');
                 if (readdirCalledTimes === 0) {
                     readdirCalledTimes++;
                     assert.equals(path, 'Project/app/src');
-                    callback(null, ['fakeModule.js', 'app.js', 'thatFakedOnesDir']);
+                    return ['fakeModule.js', 'app.js', 'thatFakedOnesDir'];
                 }
                 else if (readdirCalledTimes === 1) {
                     assert.equals(path.replace(/\\/g, '/'), 'Project/app/src/thatFakedOnesDir');
                     readdirCalledTimes++;
-                    callback(null, ['thatFakedOne.js', 'notWantedDir']);
+                    return ['thatFakedOne.js', 'notWantedDir'];
                 }
             }
         });
@@ -231,13 +231,13 @@ function createDependencyFinder(dependencies) {
 
 function fakeFs(readdirFileNames, object) {
     return defaultsDeep(object, {
-        lstat: function (path, callback) {
-            callback(null, {
+        lstatSync: function (path) {
+            return {
                 isDirectory: () => !path.includes('.js')
-            });
+            }
         },
-        readdir: function (path, callback) {
-            callback(null, readdirFileNames);
+        readdirSync: function (path) {
+            return readdirFileNames;
         }
     });
 }

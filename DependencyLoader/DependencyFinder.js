@@ -12,29 +12,27 @@ module.exports = function ({ fs, basePath, moduleLoader }) {
             if (!array.length) {
                 return;
             }
-            fs.lstat(path, function (err, stat) {
-                if (stat.isDirectory()) {
-                    fs.readdir(path, function (err, items) {
-                        const noItems = items.length;
-                        let i = 0;
-                        for (; i < noItems; i++) {
-                            if (!dirNamesToExclude.includes(items[i])) {
-                                search(path_module.join(path, items[i]));
-                            }
-                        }
-                    });
-                }
-                else {
-                    const { valid, name } = evaluateFoundFilePath(path, array);
-                    if (valid) {
-                        loaded[name] = moduleLoader.load(path);
-                        array.splice(array.indexOf(name), 1);
+            const stat = fs.lstatSync(path);
+            if (stat.isDirectory()) {
+                const items = fs.readdirSync(path);
+                const noItems = items.length;
+                let i = 0;
+                for (; i < noItems; i++) {
+                    if (!dirNamesToExclude.includes(items[i])) {
+                        search(path_module.join(path, items[i]));
                     }
                 }
-            });
+            }
+            else {
+                const { valid, name } = evaluateFoundFilePath(path, array);
+                if (valid) {
+                    loaded[name] = moduleLoader.load(path);
+                    array.splice(array.indexOf(name), 1);
+                }
+            }
         };
         search(basePath);
-        return loaded;
+       return loaded;
     }
 
     function evaluateFoundFilePath(path, modules) {
@@ -42,10 +40,12 @@ module.exports = function ({ fs, basePath, moduleLoader }) {
         if (moduleIsRequested(fileName, modules)) {
             const name = modules.find(module => module.toLowerCase() === fileName.toLowerCase());
             return { valid: true, name };
-        } else if ((fileName === 'index' && moduleIsRequested(directory, modules))) {
+        }
+        else if ((fileName === 'index' && moduleIsRequested(directory, modules))) {
             const name = modules.find(module => module.toLowerCase() === directory.toLowerCase());
             return { valid: true, name };
-        } else return { valid: false, name: null }
+        }
+        else return { valid: false, name: null }
     }
 
     function moduleIsRequested(moduleName, files) {
