@@ -37,10 +37,10 @@ you having to do anything.
 
 ## How does it work?
 ### API 
-| Functions                            | Requirements                                                  |
-| ------------------------------------ | ------------------------------------------------------------- |
-| DependencyLoader                     | Requires your projects entry path                             |
-| dependencyLoader.newInstanceWithName | requires a name for your module and the uninstantiaded module |
+| Functions                            | Requirements                                                  | Returns
+| ------------------------------------ | ------------------------------------------------------------- | -------------------------------------------------------------------------------|
+| DependencyLoader                     | Requires your projects entry path                             | An instance of the DependencyLoader containing the method newInstanceWithName  |
+| dependencyLoader.newInstanceWithName | requires a name for your module and the uninstantiaded module | The instantiated module                                                        |
 
 The DependencyLoader requires you to specify a path from which it will start searching for dependencies.
 The easiest way of doing this is to provide it with the nodejs property __dirname.
