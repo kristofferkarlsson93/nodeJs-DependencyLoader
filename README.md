@@ -1,5 +1,7 @@
 # DependencyLoader
-
+No more passing around dependencies from file to file. This tool takes care of that for you.
+This is an automated dependency loader. It will inject all required dependencies in to your module without
+you having to do anything.
 ## Usage
 
 ### Install it
