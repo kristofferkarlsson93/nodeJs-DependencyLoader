@@ -10,6 +10,7 @@ you having to do anything.
  ```
  
  ### Start it
+ _snippet 1.0_ 
  ```javascript
  const DependencyLoader = require('DependencyLoader');
  const MyStartModule = require('./your/module/path');
@@ -20,9 +21,9 @@ you having to do anything.
  
  myStartModule.myFunc();
  ```
- _snippet 1.0_
  
  ### Make use of it
+ _snippet 2.0_
  ```javascript
  // in file: MyStartModule.js
  module.exports = function ({dep1, dep2, dep3}) {
@@ -33,7 +34,6 @@ you having to do anything.
      }
  };
  ```
- _snippet 2.0_
 
 ## How does it work?
 ### API 
