@@ -40,7 +40,7 @@ you having to do anything.
 | Functions                            | Requirements                                                  | Returns
 | ------------------------------------ | ------------------------------------------------------------- | -------------------------------------------------------------------------------|
 | DependencyLoader                     | Requires your projects entry path                             | An instance of the DependencyLoader containing the method newInstanceWithName  |
-| dependencyLoader.newInstanceWithName | requires a name for your module and the uninstantiaded module | The instantiated module                                                        |
+| dependencyLoader.newInstanceWithName | Requires a name for your module and the uninstantiaded module | The instantiated module                                                        |
 
 The DependencyLoader requires you to specify a path from which it will start searching for dependencies.
 The easiest way of doing this is to provide it with the nodejs property __dirname.
@@ -52,15 +52,15 @@ instantiated module.
 ### Modules
 A module should ideally implement the [Revealing Module Pattern](https://www.oreilly.com/library/view/learning-javascript-design/9781449334840/ch09s03.html)
 and must take a destructed object as parameter. The destructed keys will get the instantiated dependencies as value. See usage
-in snippet 2.0
+in _snippet 2.0_
 
-### Dependency loading.
+### Dependency loading
 The dependencyLoader.newInstanceWithName will start searching the project tree to find files matching the dependencies
-names in the module provided. If the dependencies them self has dependencies they also will be found and instantiated.
+names in the module provided. If the dependencies them self have dependencies they also will be found and instantiated.
 
-It will find dependencies that matches the following criteria
-- file name is equal to the module name
-- file name is index.js but parent directory matches the module name  
+It will find dependencies that matches the following criteria. The search is case insensitive.
+- File name is equal to the module name
+- File name is index.js but parent directory matches the module name  
 
 It ignores folders with the following names
 - test
