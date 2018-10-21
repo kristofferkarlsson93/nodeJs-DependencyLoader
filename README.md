@@ -1,47 +1,70 @@
-# Automated dependency loading
+# DependencyLoader
 
-This is an attempt to implement an automated dependencyLoader in Javascript.
+## Usage
 
-Dependency loading is the act of injecting the dependencies in to a module/function/object, instead of
-letting it create them itself.
+### Install it
+ ```bash
+ npm install ...
+ ```
+ 
+ ### Start it
+ ```javascript
+ const DependencyLoader = require('DependencyLoader');
+ const MyStartModule = require('./your/module/path');
+ const rootPath = __dirname;
+ 
+ const dependencyLoader = DependencyLoader(rootPath);
+ const myStartModule = dependencyLoader.newInstanceWithName('myStartModule', MyStartModule );
+ 
+ myStartModule.myFunc();
+ ```
+ _snippet 1.0_
+ 
+ ### Make use of it
+ ```javascript
+ // in file: MyStartModule.js
+ module.exports = function ({dep1, dep2, dep3}) {
+     return { myFunc };
+     
+     function myFunc() {
+         dep1.doStuff()
+     }
+ };
+ ```
+ _snippet 2.0_
 
-## Set up
-Install the dependency
-```bash
-npm install ... 
-# No npm package yet
-```
+## How does it work?
+### API 
+| Functions                            | Requirements                                                  |
+| ------------------------------------ | ------------------------------------------------------------- |
+| DependencyLoader                     | Requires your projects entry path                             |
+| dependencyLoader.newInstanceWithName | requires a name for your module and the uninstantiaded module |
 
-Use the dependency loader
-```javascript
-const DependencyLoader = require('DependencyLoader');
-const MyStartModule = require('./your/module/path');
-const rootPath = __dirname;
+The DependencyLoader requires you to specify a path from which it will start searching for dependencies.
+The easiest way of doing this is to provide it with the nodejs property __dirname.
 
-const dependencyLoader = DependencyLoader(rootPath);
-const myStartModule = dependencyLoader.newInstanceWithName('myStartModule', MyStartModule );
+When the DependencyLoader has been instantiated, access is granted to the newInstanceWithName method.
+This method takes two parameters. First the name of the module and secondly the module itself. It returns the 
+instantiated module.
 
-myStartModule.someFunc();
-```
+### Modules
+A module should ideally implement the [Revealing Module Pattern](https://www.oreilly.com/library/view/learning-javascript-design/9781449334840/ch09s03.html)
+and must take a destructed object as parameter. The destructed keys will get the instantiated dependencies as value. See usage
+in snippet 2.0
 
-Require the DependencyLoader and the module you want to load. 
-The dependencyLoader requires a "root" path, since it searches for dependencies starting from that location.
-Pass the name of the module and the module to the dependency loaders `newInstanceWithName`.
-The dependency loader will now load the module and all of its dependencies. 
-If the dependencies has dependencies them self, they will also be loaded.
+### Dependency loading.
+The dependencyLoader.newInstanceWithName will start searching the project tree to find files matching the dependencies
+names in the module provided. If the dependencies them self has dependencies they also will be found and instantiated.
 
-### A module
-The module needs to implement the Revealing module pattern.
-The dependencies need to be destructed from an object like in the example. They also need to have a matching filename in your project 
-The instantiated dependencies will automatically be injected as the value of the keys.
-  
-```javascript
-// File: MyStartModule
-module.exports = function ({dep1, dep2, dep3}) {
-    return { myFunc };
-    
-    function myFunc() {
-        dep1.doStuff()
-    }
-};
-```
+It will find dependencies that matches the following criteria
+- file name is equal to the module name
+- file name is index.js but parent directory matches the module name  
+
+It ignores folders with the following names
+- test
+- tests
+- node_modules
+ 
+## What is dependencyInjection
+Dependency injection is the act of injecting the dependencies a module uses in to it. This means that the module do not
+need to use `require('./someModule.js')`. This makes the module easier to test and simpler to use.
