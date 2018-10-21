@@ -189,5 +189,42 @@ module.exports = testCase('DependencyLoader', {
         assert.calledTwice(dependencyFinder.findFromArray);
         const argsSecondCall = dependencyFinder.findFromArray.getCall(1).args[0];
         assert.equals(argsSecondCall, ['dependencyC']);
+    },
+    'when module uses arrow function and has 1 dependency': {
+        setUp() {
+            const DependencyLoader = require('../../DependencyLoader/DependencyLoader.js');
+            this.exampleDependency = sinon.stub().returns(() => {return {};});
+            const dependencyFinder = {
+                findFromArray: () => ({ exampleDependency: this.exampleDependency })
+            };
+            this.dependencyCache = {
+                add: sinon.stub(),
+                get: () => null
+            };
+            this.exampleModule = ({ exampleDependency }) => {
+                return {
+                    verification: () => {return 'works';}
+                };
+            };
+
+            const dependencyLoader = DependencyLoader({
+                dependencyCache: this.dependencyCache,
+                dependencyFinder,
+                functionReflector: realFunctionReflector
+            });
+            this.instance = dependencyLoader.newInstanceWithName('exampleModule', this.exampleModule);
+        },
+        'should run dependency': function () {
+            assert.calledOnce(this.exampleDependency);
+        },
+        'should cache dependency': function () {
+            assert.calledWith(this.dependencyCache.add, sinon.match("exampleDependency", {}));
+        },
+        'should cache function': function () {
+            assert.calledWith(this.dependencyCache.add, sinon.match("exampleModule", {}));
+        },
+        'should return correct instance': function () {
+            assert.equals(this.instance.verification(), 'works');
+        }
     }
 });
