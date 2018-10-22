@@ -1,7 +1,9 @@
-module.exports = function () {
-    return { getUserByEmail };
+module.exports = function ({ userDatabaseGateway }) {
+    return {
+        getUserByEmail
+    };
 
     function getUserByEmail(email) {
-        return { name: 'A name', email };
+        userDatabaseGateway.getByEmail(email);
     }
 };

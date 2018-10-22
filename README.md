@@ -3,8 +3,6 @@ No more passing around dependencies from file to file. This tool takes care of t
 This is an automated dependency loader. It will inject all required dependencies in to your module without
 you having to do anything.
 
-Take a look in the 
-[Example folder](https://github.com/kristofferkarlsson93/JavaScript-DependencyLoader/tree/master/Example/) in the repo
 ## Usage
 
 ### Install it
@@ -73,3 +71,87 @@ It ignores folders with the following names
 ## What is dependencyInjection
 Dependency injection is the act of injecting the dependencies a module uses in to it. This means that the module do not
 need to use `require('./someModule.js')`. This makes the module easier to test and simpler to use.
+
+## Detailed usage
+To better illustrate the use of the dependencyLoader a more detailed example is provided.
+
+The following example can also be found in full in the github 
+[Example folder](https://github.com/kristofferkarlsson93/JavaScript-DependencyLoader/tree/master/Example/) in the repo.
+
+```ASCII
+|
+| - | Controllers
+| - - | Login
+| - - - | LoginWithEmailController.js 
+|
+| - | DatabaseGateways
+| - - | UserDataBaseGateway.js
+|
+| - | Helpers
+| - - | TokenCreator
+| - - - | index.js
+| - - | RespondeCreator.js
+|
+| - | Providers
+| - - | UserProvider.js
+|
+|- app.js
+```
+
+Let's dive in to app.js.
+
+```javascript
+const DependencyLoader = require('DependencyLoader');
+const LoginWithEmailController = require('./Controllers/Login/LoginWithEmailController.js');
+
+const dependencyLoader = DependencyLoader(__dirname);
+const loginWithEmailController = dependencyLoader.load('loginWithEmailController', LoginWithEmailController);
+
+loginWithEmailController.login('someMail@ignore.mail');
+```
+Here you would of course have some server-setup code too. But for this example that is not necessary.
+
+When the DependencyLoader is required and instantiated the `load` function is executed to load the first module (LoginWithEmailController).
+As seen in the fileTree that module is located under `Controllers/Login/`. 
+The module looks like this.
+
+```javascript
+// LoginWithEmailController.js
+module.exports = function ({emailValidator, userProvider, responseCreator, tokenCreator}) {
+    return {
+        login
+    };
+
+    function login (email) {
+        if (emailValidator.validates(email)) {
+            const user = userProvider.getUserByEmail();
+            const token = tokenCreator.createForUser(user);
+            responseCreator.sendSuccess({ token });
+        } else {
+            responseCreator.sendBadCredentials();
+        }
+    }
+};
+```
+
+As seen in the exported function the module requires four dependencies. When this module is loaded through the 
+dependencyLoader the dependencyLoader will find these four dependencies in the project and inject them in to the module.
+So as long as the dependencies specified can be found, they will be injected.
+
+If the modules dependencies themselves requires dependencies they will also be loaded, as seen in UserProvider, 
+which is dependent on UserDatabaseGateway.
+
+```javascript
+// Userprovider.js
+module.exports = function (userDatabaseGateway) {
+    return {
+        getUserByEmail
+    };
+
+    function getUserByEmail(email) {
+        userDatabaseGateway.getByEmail(email);
+    }
+};
+```
+
+When a dependency has been loaded once it is added to the cache.
