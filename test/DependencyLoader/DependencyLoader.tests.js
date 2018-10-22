@@ -2,7 +2,6 @@ const bocha = require('bocha');
 const sinon = bocha.sinon;
 const testCase = bocha.testCase;
 const assert = bocha.assert;
-const refute = bocha.refute;
 const realFunctionReflector = require('js-function-reflector');
 
 module.exports = testCase('DependencyLoader', {
@@ -16,7 +15,7 @@ module.exports = testCase('DependencyLoader', {
             const dependencyLoader = DependencyLoader({ dependencyCache: this.dependencyCache });
             this.exampleFunction = sinon.stub().returns({});
 
-            dependencyLoader.newInstanceWithName('exampleFunction', this.exampleFunction);
+            dependencyLoader.load('exampleFunction', this.exampleFunction);
         },
         'should run function': function () {
             assert.calledOnce(this.exampleFunction);
@@ -42,10 +41,10 @@ module.exports = testCase('DependencyLoader', {
                 functionReflector: realFunctionReflector
             });
 
-            this.dependencyLoader.newInstanceWithName('exampleFunction', this.exampleFunction);
-            this.dependencyLoader.newInstanceWithName('exampleFunction', this.exampleFunction);
+            this.dependencyLoader.load('exampleFunction', this.exampleFunction);
+            this.dependencyLoader.load('exampleFunction', this.exampleFunction);
         },
-        'should get cached intstance for second call': function () {
+        'should get cached instance for second call': function () {
             assert.calledWith(this.dependencyCache.get, 'exampleFunction');
         },
         'should instantiate the function only once': function () {
@@ -74,7 +73,7 @@ module.exports = testCase('DependencyLoader', {
                 dependencyFinder,
                 functionReflector: realFunctionReflector
             });
-            this.instance = dependencyLoader.newInstanceWithName('exampleModule', this.exampleModule);
+            this.instance = dependencyLoader.load('exampleModule', this.exampleModule);
         },
         'should run dependency': function () {
             assert.calledOnce(this.exampleDependency);
@@ -109,7 +108,7 @@ module.exports = testCase('DependencyLoader', {
                 functionReflector: realFunctionReflector
             });
             const module = function ({ firstLevelDependency }) {return { verification: function () {return firstLevelDependency.verification();} };};
-            this.instance = dependencyLoader.newInstanceWithName('module', module);
+            this.instance = dependencyLoader.load('module', module);
         },
         'should run the second level dependency': function () {
             assert.calledOnce(this.secondLevelDependency);
@@ -152,7 +151,7 @@ module.exports = testCase('DependencyLoader', {
                     }
                 };
             };
-            this.instance = dependencyLoader.newInstanceWithName('module', module);
+            this.instance = dependencyLoader.load('module', module);
         },
         'should instantiate first dependency': function () {
             assert.calledOnce(this.firstDependency);
@@ -183,7 +182,7 @@ module.exports = testCase('DependencyLoader', {
             functionReflector: realFunctionReflector
         });
 
-        dependencyLoader.newInstanceWithName('module', module);
+        dependencyLoader.load('module', module);
 
         assert.calledOnce(dependencyA);
         assert.calledTwice(dependencyFinder.findFromArray);
@@ -212,7 +211,7 @@ module.exports = testCase('DependencyLoader', {
                 dependencyFinder,
                 functionReflector: realFunctionReflector
             });
-            this.instance = dependencyLoader.newInstanceWithName('exampleModule', this.exampleModule);
+            this.instance = dependencyLoader.load('exampleModule', this.exampleModule);
         },
         'should run dependency': function () {
             assert.calledOnce(this.exampleDependency);

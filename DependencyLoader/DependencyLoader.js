@@ -1,9 +1,9 @@
 module.exports = function ({ dependencyCache, dependencyFinder, functionReflector }) {
     return {
-        newInstanceWithName,
+        load,
     };
 
-    function newInstanceWithName(moduleName, module) {
+    function load(moduleName, module) {
         let instance = null;
         const cachedInstance = dependencyCache.get(moduleName);
         if (cachedInstance) {
@@ -32,7 +32,7 @@ module.exports = function ({ dependencyCache, dependencyFinder, functionReflecto
         });
         const foundDependencies = dependencyFinder.findFromArray(parameterNames);
         Object.keys(foundDependencies).forEach(dependencyName => {
-            dependencies[dependencyName] = newInstanceWithName(dependencyName, foundDependencies[dependencyName]);
+            dependencies[dependencyName] = load(dependencyName, foundDependencies[dependencyName]);
         });
 
         return dependencies;

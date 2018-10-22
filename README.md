@@ -20,7 +20,7 @@ Take a look in the
  const rootPath = __dirname;
  
  const dependencyLoader = DependencyLoader(rootPath);
- const myStartModule = dependencyLoader.newInstanceWithName('myStartModule', MyStartModule );
+ const myStartModule = dependencyLoader.load('myStartModule', MyStartModule );
  
  myStartModule.myFunc();
  ```
@@ -42,13 +42,13 @@ Take a look in the
 ### API 
 | Functions                            | Requirements                                                  | Returns
 | ------------------------------------ | ------------------------------------------------------------- | -------------------------------------------------------------------------------|
-| DependencyLoader                     | Requires your projects entry path                             | An instance of the DependencyLoader containing the method newInstanceWithName  |
-| dependencyLoader.newInstanceWithName | Requires a name for your module and the uninstantiaded module | The instantiated module                                                        |
+| DependencyLoader                     | Requires your projects entry path                             | An instance of the DependencyLoader containing the method load  |
+| dependencyLoader.load | Requires a name for your module and the uninstantiaded module | The instantiated module                                                        |
 
 The DependencyLoader requires you to specify a path from which it will start searching for dependencies.
 The easiest way of doing this is to provide it with the nodejs property __dirname.
 
-When the DependencyLoader has been instantiated, access is granted to the newInstanceWithName method.
+When the DependencyLoader has been instantiated, access is granted to the `load` method.
 This method takes two parameters. First the name of the module and secondly the module itself. It returns the 
 instantiated module.
 
@@ -58,7 +58,7 @@ and must take a destructed object as parameter. The destructed keys will get the
 in _snippet 2.0_
 
 ### Dependency loading
-The dependencyLoader.newInstanceWithName will start searching the project tree to find files matching the dependencies
+The dependencyLoader.load will start searching the project tree to find files matching the dependencies
 names in the module provided. If the dependencies them self have dependencies they also will be found and instantiated.
 
 It will find dependencies that matches the following criteria. The search is case insensitive.
