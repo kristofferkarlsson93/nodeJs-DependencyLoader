@@ -1,15 +1,15 @@
 {
-  "name": "automateddependencyloading",
+  "name": "dependencyloader",
   "version": "1.0.0",
-  "description": "This is an attempt to implement an automated dependencyLoader in Javascript.",
+  "description": "An automated dependencyLoader in Javascript.",
   "main": "index.js",
-  "scripts": {
-    "test": "mocha -w --recursive"
-  },
+  "scripts": {},
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bocha": "^1.6.9",
     "js-function-reflector": "^2.0.2"
+  },
+  "devDependencies": {
+    "bocha": "^1.6.9"
   }
 }
