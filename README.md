@@ -92,7 +92,7 @@ The following example can also be found in full in the github
 | - | Providers
 | - - | UserProvider.js
 |
-|- app.js
+|- | app.js
 ```
 
 Let's dive in to app.js.
