@@ -6,12 +6,15 @@ you having to do anything.
 ## Usage
 
 ### Install it
+
  ```bash
  npm i @krikar/dependencyloader
  ```
  
  ### Start it
+ 
  _snippet 1.0_ 
+ 
  ```javascript
  const DependencyLoader = require('DependencyLoader');
  const MyStartModule = require('./your/module/path');
@@ -24,7 +27,9 @@ you having to do anything.
  ```
  
  ### Make use of it
+ 
  _snippet 2.0_
+ 
  ```javascript
  // in file: MyStartModule.js
  module.exports = function ({ dep1, dep2, dep3 }) {
@@ -35,10 +40,13 @@ you having to do anything.
      }
  };
  ```
+ 
 For more detailed example see below. [Detailed example](#Detailed-usage)
 
 ## How does it work?
-### API 
+
+### API
+ 
 | Functions              | Input                                                | Returns
 | ---------------------- | ---------------------------------------------------- | ---------------------------------------------------------------- |
 | DependencyLoader       | Your projects entry path                             | An instance of the DependencyLoader containing the method `load` |
@@ -52,11 +60,13 @@ This method takes two parameters. First the name of the module and secondly the 
 instantiated module.
 
 ### Modules
+
 A module should ideally implement the [Revealing Module Pattern](https://www.oreilly.com/library/view/learning-javascript-design/9781449334840/ch09s03.html)
 and must take a destructed object as parameter. The destructed keys will get the instantiated dependencies as value. See usage
 in _snippet 2.0_
 
 ### Dependency loading
+
 The `dependencyLoader.load` will start searching the project tree to find files matching the dependency names 
 in the module provided. If the dependencies them self have dependencies they also will be found and instantiated.
 
@@ -70,6 +80,7 @@ It ignores folders with the following names
 - node_modules
  
 ## Detailed usage
+
 To better illustrate the use of the dependencyLoader a more detailed example is provided.
 
 The following example can also be found in full in the github 
@@ -106,6 +117,7 @@ const loginWithEmailController = dependencyLoader.load('loginWithEmailController
 
 loginWithEmailController.login('someMail@ignore.mail');
 ```
+
 Here you would of course have some server-setup code too. But for this example that is not necessary.
 
 When the DependencyLoader is required and instantiated the `load` function is executed to load the first module (LoginWithEmailController).
