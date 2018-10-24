@@ -38,10 +38,10 @@ you having to do anything.
 
 ## How does it work?
 ### API 
-| Functions                            | Requirements                                                  | Returns
-| ------------------------------------ | ------------------------------------------------------------- | -------------------------------------------------------------------------------|
-| DependencyLoader                     | Requires your projects entry path                             | An instance of the DependencyLoader containing the method load  |
-| dependencyLoader.load | Requires a name for your module and the uninstantiaded module | The instantiated module                                                        |
+| Functions              | Requirements                                                  | Returns
+| ---------------------- | ------------------------------------------------------------- | -------------------------------------------------------------- |
+| DependencyLoader       | Requires your projects entry path                             | An instance of the DependencyLoader containing the method `load` |
+| dependencyLoader.load  | Requires a name for your module and the uninstantiaded module | The instantiated module                                        |
 
 The DependencyLoader requires you to specify a path from which it will start searching for dependencies.
 The easiest way of doing this is to provide it with the nodejs property __dirname.
@@ -56,7 +56,7 @@ and must take a destructed object as parameter. The destructed keys will get the
 in _snippet 2.0_
 
 ### Dependency loading
-The dependencyLoader.load will start searching the project tree to find files matching the dependencies
+The `dependencyLoader.load` will start searching the project tree to find files matching the dependencies
 names in the module provided. If the dependencies them self have dependencies they also will be found and instantiated.
 
 It will find dependencies that matches the following criteria. The search is case insensitive.
@@ -90,7 +90,7 @@ The following example can also be found in full in the github
 | - | Helpers
 | - - | TokenCreator
 | - - - | index.js
-| - - | RespondeCreator.js
+| - - | ResponceCreator.js
 |
 | - | Providers
 | - - | UserProvider.js
@@ -143,7 +143,7 @@ which is dependent on UserDatabaseGateway.
 
 ```javascript
 // Userprovider.js
-module.exports = function (userDatabaseGateway) {
+module.exports = function ({ userDatabaseGateway }) {
     return {
         getUserByEmail
     };
