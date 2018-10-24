@@ -7,7 +7,7 @@ you having to do anything.
 
 ### Install it
  ```bash
- npm install ...
+ npm i @krikar/dependencyloader
  ```
  
  ### Start it

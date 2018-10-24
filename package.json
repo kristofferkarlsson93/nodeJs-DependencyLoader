@@ -1,11 +1,21 @@
 {
-  "name": "dependencyloader",
+  "name": "@krikar/dependencyloader",
   "version": "1.0.0",
-  "description": "An automated dependencyLoader in Javascript.",
+  "description": "An automated dependencyLoader for nodejs.",
   "main": "index.js",
   "scripts": {},
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
+  "repository": "kristofferkarlsson93/nodeJs-DependencyLoader",
+  "keywords": [
+    "dependnecy loader",
+    "dependencyloader",
+    "dependencies",
+    "load",
+    "structure",
+    "helper",
+    "nodejs"
+  ],
   "dependencies": {
     "js-function-reflector": "^2.0.2"
   },
