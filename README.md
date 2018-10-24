@@ -27,7 +27,7 @@ you having to do anything.
  _snippet 2.0_
  ```javascript
  // in file: MyStartModule.js
- module.exports = function ({dep1, dep2, dep3}) {
+ module.exports = function ({ dep1, dep2, dep3 }) {
      return { myFunc };
      
      function myFunc() {
@@ -114,7 +114,7 @@ The module looks like this.
 
 ```javascript
 // LoginWithEmailController.js
-module.exports = function ({emailValidator, userProvider, responseCreator, tokenCreator}) {
+module.exports = function ({ emailValidator, userProvider, responseCreator, tokenCreator }) {
     return {
         login
     };
