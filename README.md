@@ -11,7 +11,7 @@ you having to do anything.
  npm i @krikar/dependencyloader
  ```
  
- ### Start it
+### Start it
  
  _snippet 1.0_ 
  
@@ -26,7 +26,7 @@ you having to do anything.
  myStartModule.myFunc();
  ```
  
- ### Make use of it
+### Make use of it
  
  _snippet 2.0_
  
