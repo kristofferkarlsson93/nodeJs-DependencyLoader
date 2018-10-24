@@ -35,7 +35,7 @@ you having to do anything.
      }
  };
  ```
-For more detailed example see below. [Detailed example](#Detailed usage)
+For more detailed example see below. [Detailed example](#Detailed-usage)
 
 ## How does it work?
 ### API 
