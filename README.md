@@ -45,7 +45,7 @@ For more detailed example see below. [Detailed example](#Detailed-usage)
 | dependencyLoader.load  | A name for your module and the uninstantiated module | The instantiated module                                          |
 
 The DependencyLoader requires you to specify a path from which it will start searching for dependencies.
-The easiest way of doing this is to provide it with the nodejs property __dirname.
+The easiest way of doing this is to provide it with the nodejs `__dirname`.
 
 When the DependencyLoader has been instantiated, access is granted to the `load` method.
 This method takes two parameters. First the name of the module and secondly the module itself. It returns the 
@@ -57,8 +57,8 @@ and must take a destructed object as parameter. The destructed keys will get the
 in _snippet 2.0_
 
 ### Dependency loading
-The `dependencyLoader.load` will start searching the project tree to find files matching the dependencies
-names in the module provided. If the dependencies them self have dependencies they also will be found and instantiated.
+The `dependencyLoader.load` will start searching the project tree to find files matching the dependency names 
+in the module provided. If the dependencies them self have dependencies they also will be found and instantiated.
 
 It will find dependencies that matches the following criteria. The search is case insensitive.
 - File name is equal to the module name
@@ -69,10 +69,6 @@ It ignores folders with the following names
 - tests
 - node_modules
  
-## What is dependencyInjection
-Dependency injection is the act of injecting the dependencies a module uses in to it. This means that the module do not
-need to use `require('./someModule.js')`. This makes the module easier to test and simpler to use.
-
 ## Detailed usage
 To better illustrate the use of the dependencyLoader a more detailed example is provided.
 
