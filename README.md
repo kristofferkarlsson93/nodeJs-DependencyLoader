@@ -1,4 +1,4 @@
-# DependencyLoader
+# Nodejs DependencyLoader
 No more passing around dependencies from file to file. This tool takes care of that for you.
 This is an automated dependency loader. It will inject all required dependencies in to your module without
 you having to do anything.
@@ -35,13 +35,14 @@ you having to do anything.
      }
  };
  ```
+For more detailed example see below. [Detailed example](#Detailed usage)
 
 ## How does it work?
 ### API 
-| Functions              | Requirements                                                  | Returns
-| ---------------------- | ------------------------------------------------------------- | -------------------------------------------------------------- |
-| DependencyLoader       | Requires your projects entry path                             | An instance of the DependencyLoader containing the method `load` |
-| dependencyLoader.load  | Requires a name for your module and the uninstantiaded module | The instantiated module                                        |
+| Functions              | Input                                                | Returns
+| ---------------------- | ---------------------------------------------------- | ---------------------------------------------------------------- |
+| DependencyLoader       | Your projects entry path                             | An instance of the DependencyLoader containing the method `load` |
+| dependencyLoader.load  | A name for your module and the uninstantiated module | The instantiated module                                          |
 
 The DependencyLoader requires you to specify a path from which it will start searching for dependencies.
 The easiest way of doing this is to provide it with the nodejs property __dirname.
