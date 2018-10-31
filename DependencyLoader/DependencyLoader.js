@@ -1,6 +1,7 @@
 module.exports = function ({ dependencyCache, dependencyFinder, functionReflector }) {
     return {
         load,
+        feed
     };
 
     function load(moduleName, module) {
@@ -18,6 +19,12 @@ module.exports = function ({ dependencyCache, dependencyFinder, functionReflecto
         }
         dependencyCache.add(moduleName, instance);
         return instance;
+    }
+
+    function feed(modules) {
+        modules.forEach(module => {
+            dependencyCache.add(module.moduleName, module.module);
+        })
     }
 
     function instantiateDependenciesForModule(module) {

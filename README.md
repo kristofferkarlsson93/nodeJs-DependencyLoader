@@ -47,17 +47,24 @@ For more detailed example see below. [Detailed example](#Detailed-usage)
 
 ### API
  
-| Functions              | Input                                                | Returns
-| ---------------------- | ---------------------------------------------------- | ---------------------------------------------------------------- |
-| DependencyLoader       | Your projects entry path                             | An instance of the DependencyLoader containing the method `load` |
-| dependencyLoader.load  | A name for your module and the uninstantiated module | The instantiated module                                          |
+| Functions              | Input                                                                                            | Returns
+| ---------------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
+| DependencyLoader       | Your projects entry path                                                                         | An instance of the DependencyLoader containing the method `load` |
+| dependencyLoader.load  | A name for your module and the uninstantiated module                                             | The instantiated module                                          |
+| dependencyLoader.feed  | An array with objects containing the name and module `[{ moduleName: 'myModule', module: {} }]`  |                                                                  |
 
 The DependencyLoader requires you to specify a path from which it will start searching for dependencies.
 The easiest way of doing this is to provide it with the nodejs `__dirname`.
 
-When the DependencyLoader has been instantiated, access is granted to the `load` method.
-This method takes two parameters. First the name of the module and secondly the module itself. It returns the 
+When the DependencyLoader has been instantiated, access is granted to the `load` method and the `feed` method.
+
+The load method takes two parameters. First the name of the module and secondly the module itself. It returns the 
 instantiated module.
+
+The feed method takes an array of objects containing the moduleName and the instantiated module you want to feed the dependency loader with.
+This method can be used for hooking up your npm-dependencies with the dependencyLoader. For example you could feed the 
+dependencyLoader with Express, and thus get access to express wherever you want by specifying it in your module. 
+_WARNING_ It is often a better practice to make a wrapper to your dependencies. 
 
 ### Modules
 
@@ -158,7 +165,7 @@ module.exports = function ({ userDatabaseGateway }) {
     };
 
     function getUserByEmail(email) {
-        userDatabaseGateway.getByEmail(email);
+        return userDatabaseGateway.getByEmail(email);
     }
 };
 ```
