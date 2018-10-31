@@ -225,7 +225,7 @@ module.exports = testCase('DependencyFinder', {
 });
 
 function createDependencyFinder(dependencies) {
-    const DependencyFinder = require('../../DependencyLoader/DependencyFinder.js');
+    const DependencyFinder = require('../../../DependencyLoader/DependencyFinder.js');
     return DependencyFinder(dependencies);
 }
 

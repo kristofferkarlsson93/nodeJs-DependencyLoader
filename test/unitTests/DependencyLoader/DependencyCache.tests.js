@@ -3,7 +3,7 @@ const sinon = bocha.sinon;
 const testCase = bocha.testCase;
 const assert = bocha.assert;
 const refute = bocha.refute;
-const utils = require('../utils.js')();
+const utils = require('../../utils.js')();
 
 module.exports = testCase('DependencyCache', {
     'when trying to get an uncached value should return null': function () {
@@ -39,6 +39,6 @@ module.exports = testCase('DependencyCache', {
 });
 
 function createDependnecyCache() {
-    const DependencyCache = require('../../DependencyLoader/DependencyCache.js');
+    const DependencyCache = require('../../../DependencyLoader/DependencyCache.js');
     return DependencyCache();
 }

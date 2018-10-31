@@ -12,7 +12,7 @@ module.exports = testCase('DependencyLoader', {
                     add: sinon.stub(),
                     get: () => null
                 };
-                const DependencyLoader = require('../../DependencyLoader/DependencyLoader.js');
+                const DependencyLoader = require('../../../DependencyLoader/DependencyLoader.js');
                 const dependencyLoader = DependencyLoader({ dependencyCache: this.dependencyCache });
                 this.exampleFunction = sinon.stub().returns({});
 
@@ -28,7 +28,7 @@ module.exports = testCase('DependencyLoader', {
         },
         'when given the same function twice': {
             setUp() {
-                const DependencyLoader = require('../../DependencyLoader/DependencyLoader.js');
+                const DependencyLoader = require('../../../DependencyLoader/DependencyLoader.js');
                 this.exampleFunction = sinon.stub();
                 this.dependencyCache = {
                     add: sinon.stub(),
@@ -54,7 +54,7 @@ module.exports = testCase('DependencyLoader', {
         },
         'when given a function with 1 dependency': {
             setUp() {
-                const DependencyLoader = require('../../DependencyLoader/DependencyLoader.js');
+                const DependencyLoader = require('../../../DependencyLoader/DependencyLoader.js');
                 this.exampleDependency = sinon.stub().returns(function () {return {};});
                 const dependencyFinder = {
                     findFromArray: () => ({ exampleDependency: this.exampleDependency })
@@ -91,7 +91,7 @@ module.exports = testCase('DependencyLoader', {
         },
         'when given a function with 1 dependency that it self has 1 dependency': {
             setUp() {
-                const DependencyLoader = require('../../DependencyLoader/DependencyLoader.js');
+                const DependencyLoader = require('../../../DependencyLoader/DependencyLoader.js');
                 this.dependencyCache = {
                     add: sinon.stub(),
                     get: () => null
@@ -126,7 +126,7 @@ module.exports = testCase('DependencyLoader', {
         },
         'when given a function with 2 dependencies': {
             setUp() {
-                const DependencyLoader = require('../../DependencyLoader/DependencyLoader.js');
+                const DependencyLoader = require('../../../DependencyLoader/DependencyLoader.js');
                 const dependencyCache = { add: () => {}, get: () => null };
                 this.secondDependency = sinon.stub().returns({
                     verification: function () {return 2}
@@ -165,8 +165,8 @@ module.exports = testCase('DependencyLoader', {
             },
         },
         'when a module has dependency A and B and dependency B is dependent on A should NOT search for A twice': function () {
-            const DependencyLoader = require('../../DependencyLoader/DependencyLoader.js');
-            const DependencyCache = require('../../DependencyLoader/DependencyCache.js');
+            const DependencyLoader = require('../../../DependencyLoader/DependencyLoader.js');
+            const DependencyCache = require('../../../DependencyLoader/DependencyCache.js');
             const dependencyCache = DependencyCache();
             const dependencyA = sinon.stub().returns({});
             const dependencyC = function () {return {}};
@@ -192,7 +192,7 @@ module.exports = testCase('DependencyLoader', {
         },
         'when module uses arrow function and has 1 dependency': {
             setUp() {
-                const DependencyLoader = require('../../DependencyLoader/DependencyLoader.js');
+                const DependencyLoader = require('../../../DependencyLoader/DependencyLoader.js');
                 this.exampleDependency = sinon.stub().returns(() => {return {};});
                 const dependencyFinder = {
                     findFromArray: () => ({ exampleDependency: this.exampleDependency })
@@ -233,7 +233,7 @@ module.exports = testCase('DependencyLoader', {
             const dependencyCache = {
                 add: sinon.stub(),
             };
-            const DependencyLoader = require('../../DependencyLoader/DependencyLoader.js');
+            const DependencyLoader = require('../../../DependencyLoader/DependencyLoader.js');
             const dependencyLoader = DependencyLoader({ dependencyCache });
             const nameModulePair = { moduleName: 'testModule', module: {} };
             dependencyLoader.feed([nameModulePair]);
@@ -245,7 +245,7 @@ module.exports = testCase('DependencyLoader', {
             const dependencyCache = {
                 add: sinon.stub()
             };
-            const DependencyLoader = require('../../DependencyLoader/DependencyLoader.js');
+            const DependencyLoader = require('../../../DependencyLoader/DependencyLoader.js');
             const dependencyLoader = DependencyLoader({ dependencyCache });
             const nameModulePairs = [
                 { moduleName: 'testModule', module: { key: 'value 1' } },

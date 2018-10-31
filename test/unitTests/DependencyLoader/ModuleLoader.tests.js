@@ -11,7 +11,7 @@ module.exports = testCase('ModuleLoader', {
         _module._load = load;
     },
     'when given a file path should require it': function () {
-        const ModuleLoader = require('../../DependencyLoader/ModuleLoader.js');
+        const ModuleLoader = require('../../../DependencyLoader/ModuleLoader.js');
         const stubbedRequire = sinon.stub(_module, '_load');
         const moduleLoader = ModuleLoader();
 
