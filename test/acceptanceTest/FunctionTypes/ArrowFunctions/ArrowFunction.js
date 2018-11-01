@@ -1,8 +1,8 @@
-module.exports = () => {
+module.exports = ({ secondArrowFunction }) => {
     return {
         validate
     };
     function validate() {
-        return 'arrowFunction';
+        return ['arrowFunction', secondArrowFunction.validate()];
     }
 };

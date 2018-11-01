@@ -4,6 +4,10 @@ module.exports = function ({ arrowFunction, standardFunction, namedFunction }) {
     };
 
     function validate() {
-        return [arrowFunction.validate(), standardFunction.validate(), namedFunction.validate()];
+        return [
+            ...arrowFunction.validate(),
+            standardFunction.validate(),
+            namedFunction.validate()
+        ];
     }
 };
