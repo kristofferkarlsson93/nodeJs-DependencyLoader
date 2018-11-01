@@ -1,4 +1,10 @@
-module.exports = function ({feedDependenciesRunner, functionTypesRunner, firstIndexFunction, nestedDependenciesRunner, cachedDependenciesRunner }) {
+module.exports = function ({
+    feedDependenciesRunner,
+    functionTypesRunner,
+    firstIndexFunction,
+    nestedDependenciesRunner,
+    cachedDependenciesRunner
+}) {
     return {
         validate
     };

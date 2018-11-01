@@ -47,7 +47,6 @@ module.exports = testCase('AcceptanceTest', {
                 assert(this.result.includes('secondFeedDependency'));
             },
             'it uses the cached function second time it is uses': function () {
-                console.log(this.result);
                 assert(this.result.includes('firstCached1'));
                 assert(this.result.includes('firstCached2'));
             }

@@ -226,6 +226,33 @@ module.exports = testCase('DependencyLoader', {
             'should return correct instance': function () {
                 assert.equals(this.instance.verification(), 'works');
             }
+        },
+        'when module has two dependencies chopped down on new lines should work': function () {
+            const DependencyLoader = require('../../../DependencyLoader/DependencyLoader.js');
+            const dependencyCache = { add() {}, get: () => null };
+            this.secondDependency = sinon.stub();
+            this.firstDependency = sinon.stub();
+            const dependencyFinder = {
+                findFromArray: sinon.stub().returns({
+                    firstDependency: this.firstDependency,
+                    secondDependency: this.secondDependency
+                })
+            };
+            const dependencyLoader = DependencyLoader({
+                dependencyCache,
+                dependencyFinder,
+                functionReflector: realFunctionReflector
+            });
+            const module = function ({
+                firstDependency,
+                secondDependency
+            }) {};
+            dependencyLoader.load('module', module);
+
+            const callArgs = dependencyFinder.findFromArray.getCall(0).args;
+
+            assert.equals(callArgs[0][0], 'firstDependency');
+            assert.equals(callArgs[0][1], 'secondDependency');
         }
     },
     'feed()': {
@@ -254,8 +281,8 @@ module.exports = testCase('DependencyLoader', {
             dependencyLoader.feed(nameModulePairs);
 
             assert.calledTwice(dependencyCache.add);
-            assert.calledWith(dependencyCache.add, 'testModule' , {key: 'value 1'});
-            assert.calledWith(dependencyCache.add, 'testModule2' , {key: 'value 2'});
+            assert.calledWith(dependencyCache.add, 'testModule', { key: 'value 1' });
+            assert.calledWith(dependencyCache.add, 'testModule2', { key: 'value 2' });
         },
     }
 

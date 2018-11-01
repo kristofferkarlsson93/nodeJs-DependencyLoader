@@ -47,7 +47,7 @@ module.exports = function ({ dependencyCache, dependencyFinder, functionReflecto
 
     function listParametersForModule(module) {
         const reflector = functionReflector(module);
-        return reflector.params[0].value.keys.map(param => param.name);
+        return reflector.params[0].value.keys.map(param => param.name.trim());
     }
 
     function moduleHasDependencies(module) {
