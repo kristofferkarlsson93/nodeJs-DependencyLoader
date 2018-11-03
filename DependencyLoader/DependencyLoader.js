@@ -1,20 +1,16 @@
 module.exports = function ({ dependencyCache, dependencyFinder, functionReflector }) {
-    return {
-        load,
-        feed
-    };
+    const dependencyLoader = { load, feed };
+    return dependencyLoader;
 
     function load(moduleName, module) {
         let instance = null;
         const cachedInstance = dependencyCache.get(moduleName);
         if (cachedInstance) {
             return cachedInstance;
-        }
-        else if (moduleHasDependencies(module)) {
+        } else if (moduleHasDependencies(module)) {
             const instantiatedDependencies = instantiateDependenciesForModule(module);
             instance = module(instantiatedDependencies);
-        }
-        else {
+        } else {
             instance = module();
         }
         dependencyCache.add(moduleName, instance);
@@ -28,15 +24,9 @@ module.exports = function ({ dependencyCache, dependencyFinder, functionReflecto
     }
 
     function instantiateDependenciesForModule(module) {
-        const dependencies = {};
         const parameterNames = listParametersForModule(module);
-        parameterNames.forEach((parameter, index) => {
-            const possiblyCachedDependency = dependencyCache.get(parameter);
-            if (possiblyCachedDependency) {
-                dependencies[parameter] = possiblyCachedDependency;
-                parameterNames.splice(index, 1);
-            }
-        });
+        const dependencies = { ...getKnownDependencies(parameterNames) };
+
         const foundDependencies = dependencyFinder.findFromArray(parameterNames);
         Object.keys(foundDependencies).forEach(dependencyName => {
             dependencies[dependencyName] = load(dependencyName, foundDependencies[dependencyName]);
@@ -45,9 +35,28 @@ module.exports = function ({ dependencyCache, dependencyFinder, functionReflecto
         return dependencies;
     }
 
+    function getKnownDependencies(parameterNames) {
+        const knownDependencies = {};
+        parameterNames.forEach((parameter, index) => {
+            const possiblyCachedDependency = dependencyCache.get(parameter);
+            if (possiblyCachedDependency) {
+                knownDependencies[parameter] = possiblyCachedDependency;
+                parameterNames.splice(index, 1);
+            } else if (parameterIsDependencyLoader(parameter)) {
+                knownDependencies[parameter] = dependencyLoader;
+                parameterNames.splice(index, 1);
+            }
+        });
+        return knownDependencies;
+    }
+
     function listParametersForModule(module) {
         const reflector = functionReflector(module);
         return reflector.params[0].value.keys.map(param => param.name.trim());
+    }
+
+    function parameterIsDependencyLoader(parameter) {
+        return parameter.toLowerCase() === 'dependencyloader';
     }
 
     function moduleHasDependencies(module) {

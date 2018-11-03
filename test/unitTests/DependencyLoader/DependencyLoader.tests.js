@@ -2,6 +2,7 @@ const bocha = require('bocha');
 const sinon = bocha.sinon;
 const testCase = bocha.testCase;
 const assert = bocha.assert;
+const refute = bocha.refute;
 const realFunctionReflector = require('js-function-reflector');
 
 module.exports = testCase('DependencyLoader', {
@@ -253,6 +254,36 @@ module.exports = testCase('DependencyLoader', {
 
             assert.equals(callArgs[0][0], 'firstDependency');
             assert.equals(callArgs[0][1], 'secondDependency');
+        },
+        'when module uses the dependencyLoader as a dependency': {
+            async setUp() {
+                const DependencyLoader = require('../../../DependencyLoader/DependencyLoader.js');
+                this.dependencyCache = { add: sinon.stub(), get: () => null };
+
+                const dependencyLoader = DependencyLoader({
+                    dependencyCache: this.dependencyCache,
+                    dependencyFinder: {
+                        findFromArray: () => []
+                    },
+                    functionReflector: realFunctionReflector
+                });
+                this.validation = false;
+                const testContext = this;
+                const module = function ({dependencyLoader}) {
+                    if (dependencyLoader && dependencyLoader.load && dependencyLoader.feed) {
+                        testContext.validation = true;
+                    }
+                };
+
+                dependencyLoader.load('module', module);
+
+            },
+            'should inject dependencyLoader': function () {
+                assert(this.validation);
+            },
+            'should NOT cache dependencyLoader': function () {
+                refute.calledWith(this.dependencyCache.add, 'dependencyLoader');
+            }
         }
     },
     'feed()': {
