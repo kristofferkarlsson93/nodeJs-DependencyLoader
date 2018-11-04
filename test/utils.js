@@ -4,12 +4,12 @@ module.exports = function () {
     };
 
     function runFunctionAndGetErrorData(func, arguments) {
-        const result = { didThrow: false, errorMessage: '' };
+        const result = { didThrow: false, message: '' };
         try {
             func(...arguments);
         } catch (error) {
             result.didThrow = true;
-            result.errorMessagge = error.message;
+            result.message = error.message;
         } finally {
             return result;
         }

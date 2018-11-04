@@ -6,10 +6,10 @@ module.exports = function ({ fs, basePath, moduleLoader }) {
         findFromArray
     };
 
-    function findFromArray(array) {
+    function findFromArray(moduleNames) {
         const loaded = {};
         const search = function (path) {
-            if (!array.length) {
+            if (!moduleNames.length) {
                 return;
             }
             const stat = fs.lstatSync(path);
@@ -22,17 +22,19 @@ module.exports = function ({ fs, basePath, moduleLoader }) {
                         search(path_module.join(path, items[i]));
                     }
                 }
-            }
-            else {
-                const { valid, name } = evaluateFoundFilePath(path, array);
+            } else {
+                const { valid, name } = evaluateFoundFilePath(path, moduleNames);
                 if (valid) {
                     loaded[name] = moduleLoader.load(path);
-                    array.splice(array.indexOf(name), 1);
+                    moduleNames.splice(moduleNames.indexOf(name), 1);
                 }
             }
         };
         search(basePath);
-       return loaded;
+        if (moduleNames.length) {
+            throw Error(`Could not find module(s) ${moduleNames.join(', ')}`);
+        }
+        return loaded;
     }
 
     function evaluateFoundFilePath(path, modules) {

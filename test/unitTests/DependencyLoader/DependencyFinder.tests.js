@@ -4,6 +4,8 @@ const testCase = bocha.testCase;
 const assert = bocha.assert;
 const refute = bocha.refute;
 const defaultsDeep = bocha.defaultsDeep;
+const utils = require('../../utils.js')();
+
 
 module.exports = testCase('DependencyFinder', {
     'when given an array with one requested dependency which is on the base level': {
@@ -221,6 +223,21 @@ module.exports = testCase('DependencyFinder', {
         assert.calledWith(moduleLoader.load, 'Project\\app\\src\\fakeModule.js');
         assert.calledWith(moduleLoader.load, 'Project\\app\\src\\thatFakedOnesDir\\thatFakedOne.js');
         assert.equals(dependencies, { fakeModule, thatFakedOne });
+    },
+    'when module can not be found should throw error': function () {
+        const fakePath = 'Project/app/src';
+        const fakeModuleNames = ['unknownModule1', 'unknownModule2'];
+        const fs = fakeFs(['fakeModule.js', 'app.js']);
+        const dependencyFinder = createDependencyFinder({
+            basePath: fakePath,
+            fs,
+            moduleLoader: {
+                load() {}
+            }
+        });
+        const errorData = utils.runFunctionAndGetErrorData(dependencyFinder.findFromArray, [fakeModuleNames]);
+        assert(errorData.didThrow);
+        assert.equals(errorData.message, 'Could not find module(s) unknownModule1, unknownModule2');
     }
 });
 
