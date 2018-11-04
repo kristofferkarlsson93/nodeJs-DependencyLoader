@@ -186,6 +186,24 @@ module.exports = testCase('DependencyFinder', {
         const dependencies = dependencyFinder.findFromArray(fakeModuleNames);
         assert.equals(dependencies, { fakeModule });
     },
+    'when searching for dependencies should only load .js files': function () {
+        const fakePath = 'Project/app/src';
+        const fakeModuleName = 'MyFakeModule';
+        const fs = fakeFs(['myfakemodule.txt', 'myfakemodule.js', 'app.js']);
+        const moduleLoader = {
+            load: sinon.stub()
+        };
+        const dependencyFinder = createDependencyFinder({
+            basePath: fakePath,
+            fs,
+            moduleLoader
+        });
+        const dependencies = dependencyFinder.findFromArray([fakeModuleName]);
+
+        assert.calledOnce(moduleLoader.load);
+        assert.calledWith(moduleLoader.load, 'Project\\app\\src\\myfakemodule.js');
+        refute.calledWith(moduleLoader.load, 'Project\\app\\src\\myfakemodule.txt');
+    },
     'when all dependencies found should stop traversing file tree': function () {
         const fakePath = 'Project/app/src';
         const fakeModuleNames = ['fakeModule', 'thatFakedOne'];
@@ -250,7 +268,7 @@ function fakeFs(readdirFileNames, object) {
     return defaultsDeep(object, {
         lstatSync: function (path) {
             return {
-                isDirectory: () => !path.includes('.js')
+                isDirectory: () => !path.includes('.' )
             }
         },
         readdirSync: function (path) {
