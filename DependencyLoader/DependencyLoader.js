@@ -52,6 +52,7 @@ module.exports = function ({ dependencyCache, dependencyFinder, functionReflecto
 
     function listParametersForModule(module) {
         const reflector = functionReflector(module);
+        guardAgainstMalformedParameters(reflector);
         return reflector.params[0].value.keys.map(param => param.name.trim());
     }
 
@@ -61,5 +62,14 @@ module.exports = function ({ dependencyCache, dependencyFinder, functionReflecto
 
     function moduleHasDependencies(module) {
         return module.length > 0;
+    }
+
+    function guardAgainstMalformedParameters(reflector) {
+        if (reflector.params.length > 1) {
+            throw Error('DependencyLoader do not support parameters outside the destructed object')
+        }
+        if (reflector.params[0].type !== 'DESTRUCTURING') {
+            throw Error('Module should specify parameters in an destructed object')
+        }
     }
 };

@@ -254,8 +254,9 @@ module.exports = testCase('DependencyFinder', {
             }
         });
         const errorData = utils.runFunctionAndGetErrorData(dependencyFinder.findFromArray, [fakeModuleNames]);
+
         assert(errorData.didThrow);
-        assert.equals(errorData.message, 'Could not find module(s) unknownModule1, unknownModule2');
+        assert.equals(errorData.message, 'DependencyLoader could not find module(s) unknownModule1, unknownModule2');
     }
 });
 

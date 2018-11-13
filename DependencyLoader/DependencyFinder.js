@@ -32,7 +32,7 @@ module.exports = function ({ fs, basePath, moduleLoader }) {
         };
         search(basePath);
         if (moduleNames.length) {
-            throw Error(`Could not find module(s) ${moduleNames.join(', ')}`);
+            throw Error(`DependencyLoader could not find module(s) ${moduleNames.join(', ')}`);
         }
         return loaded;
     }

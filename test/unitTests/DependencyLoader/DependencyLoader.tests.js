@@ -4,6 +4,7 @@ const testCase = bocha.testCase;
 const assert = bocha.assert;
 const refute = bocha.refute;
 const realFunctionReflector = require('js-function-reflector');
+const utils = require('../../utils.js')();
 
 module.exports = testCase('DependencyLoader', {
     'load()': {
@@ -276,7 +277,6 @@ module.exports = testCase('DependencyLoader', {
                 };
 
                 dependencyLoader.load('module', module);
-
             },
             'should inject dependencyLoader': function () {
                 assert(this.validation);
@@ -284,6 +284,38 @@ module.exports = testCase('DependencyLoader', {
             'should NOT cache dependencyLoader': function () {
                 refute.calledWith(this.dependencyCache.add, 'dependencyLoader');
             }
+        },
+        'When module NOT using object destruction should throw error': function () {
+            const DependencyLoader = require('../../../DependencyLoader/DependencyLoader.js');
+            this.dependencyCache = {
+                get: () => null
+            };
+            this.exampleModule = function (param) {};
+
+            const dependencyLoader = DependencyLoader({
+                dependencyCache: this.dependencyCache,
+                functionReflector: realFunctionReflector
+            });
+            const error = utils.runFunctionAndGetErrorData(dependencyLoader.load, ['exampleModule', this.exampleModule]);
+
+            assert(error.didThrow);
+            assert.equals(error.message, 'Module should specify parameters in an destructed object');
+        },
+        'when module has more dependencies than the destructed object should throw error': function () {
+            const DependencyLoader = require('../../../DependencyLoader/DependencyLoader.js');
+            this.dependencyCache = {
+                get: () => null
+            };
+            this.exampleModule = function ({param}, badParam) {};
+
+            const dependencyLoader = DependencyLoader({
+                dependencyCache: this.dependencyCache,
+                functionReflector: realFunctionReflector
+            });
+            const error = utils.runFunctionAndGetErrorData(dependencyLoader.load, ['exampleModule', this.exampleModule]);
+
+            assert(error.didThrow);
+            assert.equals(error.message, 'DependencyLoader do not support parameters outside the destructed object');
         }
     },
     'feed()': {
