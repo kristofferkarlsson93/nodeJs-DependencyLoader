@@ -173,10 +173,10 @@ module.exports = function ({ userDatabaseGateway }) {
 When a dependency has been loaded once it is added to the cache.
 
 ## Versions
-- 1.0 - First release.
-- 1.1 
+- **1.0** - First release.
+- **1.1**
   - Adding the `feed` function.
   - Fixing a bug that occurred when dependencies are chopped down on new line.
-    - 1.1.1
+    - **1.1.1**
       - Better errors
       - can now use the dependencyLoader as a dependency
