@@ -49,6 +49,9 @@ module.exports = testCase('AcceptanceTest', {
             'it uses the cached function second time it is uses': function () {
                 assert(this.result.includes('firstCached1'));
                 assert(this.result.includes('firstCached2'));
+            },
+            'it can inject it self as an dependency': function () {
+                assert(this.result.includes('takesDependencyLoaderAsDependency'));
             }
         }
     }

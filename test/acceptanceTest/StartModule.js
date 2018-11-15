@@ -3,7 +3,8 @@ module.exports = function ({
     functionTypesRunner,
     firstIndexFunction,
     nestedDependenciesRunner,
-    cachedDependenciesRunner
+    cachedDependenciesRunner,
+    takesDependencyLoaderAsADependency
 }) {
     return {
         validate
@@ -16,6 +17,7 @@ module.exports = function ({
             ...nestedDependenciesRunner.validate(),
             ...cachedDependenciesRunner.validate(),
             firstIndexFunction.validate(),
-        ];
+            takesDependencyLoaderAsADependency.validate()
+       ];
     }
 };
