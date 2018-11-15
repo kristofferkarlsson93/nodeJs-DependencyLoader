@@ -8,6 +8,8 @@
   "license": "MIT",
   "repository": "kristofferkarlsson93/nodeJs-DependencyLoader",
   "keywords": [
+    "dependency injection",
+    "dependencyinjection",
     "dependnecy loader",
     "dependencyloader",
     "dependencies",
@@ -17,9 +19,9 @@
     "nodejs"
   ],
   "dependencies": {
-    "js-function-reflector": "^2.0.2"
+    "js-function-reflector": "^2.0.3"
   },
   "devDependencies": {
-    "bocha": "^1.6.9"
+    "bocha": "^1.7.1"
   }
 }
