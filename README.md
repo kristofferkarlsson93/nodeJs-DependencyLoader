@@ -16,7 +16,7 @@ you having to do anything.
  _snippet 1.0_ 
  
  ```javascript
- const DependencyLoader = require('DependencyLoader');
+ const DependencyLoader = require('@krikar/dependencyloader');
  const MyStartModule = require('./your/module/path');
  const rootPath = __dirname;
  
@@ -116,7 +116,7 @@ The following example can also be found in full in the github
 Let's dive in to app.js.
 
 ```javascript
-const DependencyLoader = require('DependencyLoader');
+const DependencyLoader = require('@krikar/dependencyloader');
 const LoginWithEmailController = require('./Controllers/Login/LoginWithEmailController.js');
 
 const dependencyLoader = DependencyLoader(__dirname);
