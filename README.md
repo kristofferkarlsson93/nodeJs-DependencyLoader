@@ -180,3 +180,10 @@ When a dependency has been loaded once it is added to the cache.
     - **1.1.1**
       - Better errors
       - can now use the dependencyLoader as a dependency
+  - **1.1.2**
+    - Documentation updated
+  - **1.1.3**
+    - Updating dev dependency in test runner that made Github complain.
+  - **1.1.4**
+    - Documentation updated
+
